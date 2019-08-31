@@ -4,15 +4,15 @@ resource "google_service_account" "ci-runner" {
   display_name = "GitLab CI Runner"
 }
 resource "google_project_iam_member" "instanceadmin-ci-runner" {
-  role    = "roles/compute.instanceAdmin.v1"
+  role   = "roles/compute.instanceAdmin.v1"
   member = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 resource "google_project_iam_member" "networkadmin-ci-runner" {
-  role    = "roles/compute.networkAdmin"
+  role   = "roles/compute.networkAdmin"
   member = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 resource "google_project_iam_member" "securityadmin-ci-runner" {
-  role    = "roles/compute.securityAdmin"
+  role   = "roles/compute.securityAdmin"
   member = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 
@@ -40,8 +40,8 @@ resource "google_compute_instance" "ci-runner" {
   boot_disk {
     initialize_params {
       image = "centos-cloud/centos-7"
-      size = "10"
-      type = "pd-standard"
+      size  = "10"
+      type  = "pd-standard"
     }
   }
 
@@ -96,7 +96,7 @@ echo "GitLab CI Runner installation complete"
 SCRIPT
 
   service_account {
-    email = google_service_account.ci-runner.email
+    email  = google_service_account.ci-runner.email
     scopes = ["cloud-platform"]
   }
 }
