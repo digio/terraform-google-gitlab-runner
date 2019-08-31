@@ -45,7 +45,6 @@ resource "google_service_account" "ci_worker" {
 
 # Allow GitLab CI runner to use the worker service account.
 resource "google_service_account_iam_member" "ci_worker_ci_runner" {
-  project            = var.gcp_project
   service_account_id = google_service_account.ci_worker.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_service_account.ci_runner.email}"
