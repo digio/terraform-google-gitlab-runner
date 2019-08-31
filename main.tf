@@ -16,36 +16,36 @@
 
 # Service account for the Gitlab CI runner.  It doesn't run builds but it spawns other instances that do.
 resource "google_service_account" "ci_runner" {
-  project_id   = var.gcp_project
+  project      = var.gcp_project
   account_id   = "gitlab-ci-runner"
   display_name = "GitLab CI Runner"
 }
 resource "google_project_iam_member" "instanceadmin_ci_runner" {
-  project_id = var.gcp_project
-  role       = "roles/compute.instanceAdmin.v1"
-  member     = "serviceAccount:${google_service_account.ci_runner.email}"
+  project = var.gcp_project
+  role    = "roles/compute.instanceAdmin.v1"
+  member  = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 resource "google_project_iam_member" "networkadmin_ci_runner" {
-  project_id = var.gcp_project
-  role       = "roles/compute.networkAdmin"
-  member     = "serviceAccount:${google_service_account.ci_runner.email}"
+  project = var.gcp_project
+  role    = "roles/compute.networkAdmin"
+  member  = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 resource "google_project_iam_member" "securityadmin_ci_runner" {
-  project_id = var.gcp_project
-  role       = "roles/compute.securityAdmin"
-  member     = "serviceAccount:${google_service_account.ci_runner.email}"
+  project = var.gcp_project
+  role    = "roles/compute.securityAdmin"
+  member  = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
 resource "google_service_account" "ci_worker" {
-  project_id   = var.gcp_project
+  project      = var.gcp_project
   account_id   = "gitlab-ci-worker"
   display_name = "GitLab CI Worker"
 }
 
 # Allow GitLab CI runner to use the worker service account.
 resource "google_service_account_iam_member" "ci_worker_ci_runner" {
-  project_id         = var.gcp_project
+  project            = var.gcp_project
   service_account_id = google_service_account.ci_worker.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_service_account.ci_runner.email}"
@@ -53,7 +53,7 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
 
 # Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci_runner" {
-  project_id   = var.gcp_project
+  project      = var.gcp_project
   name         = "gitlab-ci-runner"
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
