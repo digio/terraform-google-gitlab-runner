@@ -16,30 +16,36 @@
 
 # Service account for the Gitlab CI runner.  It doesn't run builds but it spawns other instances that do.
 resource "google_service_account" "ci-runner" {
+  project_id   = var.gcp-project
   account_id   = "gitlab-ci-runner"
   display_name = "GitLab CI Runner"
 }
 resource "google_project_iam_member" "instanceadmin-ci-runner" {
-  role   = "roles/compute.instanceAdmin.v1"
-  member = "serviceAccount:${google_service_account.ci-runner.email}"
+  project_id = var.gcp-project
+  role       = "roles/compute.instanceAdmin.v1"
+  member     = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 resource "google_project_iam_member" "networkadmin-ci-runner" {
-  role   = "roles/compute.networkAdmin"
-  member = "serviceAccount:${google_service_account.ci-runner.email}"
+  project_id = var.gcp-project
+  role       = "roles/compute.networkAdmin"
+  member     = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 resource "google_project_iam_member" "securityadmin-ci-runner" {
-  role   = "roles/compute.securityAdmin"
-  member = "serviceAccount:${google_service_account.ci-runner.email}"
+  project_id = var.gcp-project
+  role       = "roles/compute.securityAdmin"
+  member     = "serviceAccount:${google_service_account.ci-runner.email}"
 }
 
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
 resource "google_service_account" "ci-worker" {
+  project_id   = var.gcp-project
   account_id   = "gitlab-ci-worker"
   display_name = "GitLab CI Worker"
 }
 
 # Allow GitLab CI runner to use the worker service account.
 resource "google_service_account_iam_member" "ci-worker-ci-runner" {
+  project_id         = var.gcp-project
   service_account_id = google_service_account.ci-worker.name
   role               = "roles/iam.serviceAccountUser"
   member             = "serviceAccount:${google_service_account.ci-runner.email}"
@@ -47,6 +53,7 @@ resource "google_service_account_iam_member" "ci-worker-ci-runner" {
 
 # Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci-runner" {
+  project_id   = var.gcp-project
   name         = "gitlab-ci-runner"
   machine_type = var.ci-runner-instance-type
   zone         = var.gcp-zone
