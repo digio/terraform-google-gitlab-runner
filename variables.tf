@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-variable "gcp-project" {
+variable "gcp_project" {
   type        = string
   description = "The GCP project to deploy the runner into."
 }
-variable "gcp-zone" {
+variable "gcp_zone" {
   type        = string
   description = "The GCP zone to deploy the runner into."
 }
-variable "gitlab-url" {
+variable "gitlab_url" {
   type        = string
   description = "The URL of the GitLab server hosting the projects to be built."
 }
-variable "ci-token" {
+variable "ci_token" {
   type        = string
   description = "The runner registration token obtained from GitLab."
 }
-variable "ci-runner-instance-type" {
+variable "ci_runner_instance_type" {
   type        = string
   default     = "f1-micro"
   description = <<EOF
@@ -38,17 +38,17 @@ The instance type used for the runner. This shouldn't need to be changed because
 themselves run on separate worker instances.
 EOF
 }
-variable "ci-concurrency" {
+variable "ci_concurrency" {
   type        = number
   default     = 1
   description = "The maximum number of worker instances to create."
 }
-variable "ci-worker-idle-time" {
+variable "ci_worker_idle_time" {
   type        = number
   default     = 300
   description = "The maximum idle time for workers before they are shutdown."
 }
-variable "ci-worker-instance-type" {
+variable "ci_worker_instance_type" {
   type        = string
   default     = "n1-standard-1"
   description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."

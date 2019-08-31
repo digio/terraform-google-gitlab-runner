@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-output "ci-worker-service-account" {
-  value       = google_service_account.ci-worker
+output "ci_worker_service_account" {
+  value       = google_service_account.ci_worker
   description = <<EOF
 The service account created for the worker instances.
 Privileges/roles may need to be assigned to this service account depending on the activities

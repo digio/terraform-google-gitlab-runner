@@ -15,48 +15,48 @@
  */
 
 # Service account for the Gitlab CI runner.  It doesn't run builds but it spawns other instances that do.
-resource "google_service_account" "ci-runner" {
-  project_id   = var.gcp-project
+resource "google_service_account" "ci_runner" {
+  project_id   = var.gcp_project
   account_id   = "gitlab-ci-runner"
   display_name = "GitLab CI Runner"
 }
-resource "google_project_iam_member" "instanceadmin-ci-runner" {
-  project_id = var.gcp-project
+resource "google_project_iam_member" "instanceadmin_ci_runner" {
+  project_id = var.gcp_project
   role       = "roles/compute.instanceAdmin.v1"
-  member     = "serviceAccount:${google_service_account.ci-runner.email}"
+  member     = "serviceAccount:${google_service_account.ci_runner.email}"
 }
-resource "google_project_iam_member" "networkadmin-ci-runner" {
-  project_id = var.gcp-project
+resource "google_project_iam_member" "networkadmin_ci_runner" {
+  project_id = var.gcp_project
   role       = "roles/compute.networkAdmin"
-  member     = "serviceAccount:${google_service_account.ci-runner.email}"
+  member     = "serviceAccount:${google_service_account.ci_runner.email}"
 }
-resource "google_project_iam_member" "securityadmin-ci-runner" {
-  project_id = var.gcp-project
+resource "google_project_iam_member" "securityadmin_ci_runner" {
+  project_id = var.gcp_project
   role       = "roles/compute.securityAdmin"
-  member     = "serviceAccount:${google_service_account.ci-runner.email}"
+  member     = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
-resource "google_service_account" "ci-worker" {
-  project_id   = var.gcp-project
+resource "google_service_account" "ci_worker" {
+  project_id   = var.gcp_project
   account_id   = "gitlab-ci-worker"
   display_name = "GitLab CI Worker"
 }
 
 # Allow GitLab CI runner to use the worker service account.
-resource "google_service_account_iam_member" "ci-worker-ci-runner" {
-  project_id         = var.gcp-project
-  service_account_id = google_service_account.ci-worker.name
+resource "google_service_account_iam_member" "ci_worker_ci_runner" {
+  project_id         = var.gcp_project
+  service_account_id = google_service_account.ci_worker.name
   role               = "roles/iam.serviceAccountUser"
-  member             = "serviceAccount:${google_service_account.ci-runner.email}"
+  member             = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 
 # Create the Gitlab CI Runner instance.
-resource "google_compute_instance" "ci-runner" {
-  project_id   = var.gcp-project
+resource "google_compute_instance" "ci_runner" {
+  project_id   = var.gcp_project
   name         = "gitlab-ci-runner"
-  machine_type = var.ci-runner-instance-type
-  zone         = var.gcp-zone
+  machine_type = var.ci_runner_instance_type
+  zone         = var.gcp_zone
 
   allow_stopping_for_update = true
 
@@ -87,39 +87,39 @@ sudo install /tmp/docker-machine /usr/local/bin/docker-machine
 
 echo "Verifying docker-machine and generating SSH keys ahead of time."
 docker-machine create --driver google \
-    --google-project ${var.gcp-project} \
+    --google-project ${var.gcp_project} \
     --google-machine-type f1-micro \
-    --google-zone ${var.gcp-zone} \
-    --google-service-account ${google_service_account.ci-worker.email} \
+    --google-zone ${var.gcp_zone} \
+    --google-service-account ${google_service_account.ci_worker.email} \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
     test-docker-machine
 
 docker-machine rm -y test-docker-machine
 
 echo "Setting GitLab concurrency"
-sed -i "s/concurrent = .*/concurrent = ${var.ci-concurrency}/" /etc/gitlab-runner/config.toml
+sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
 
 echo "Registering GitLab CI runner with GitLab instance."
 sudo gitlab-runner register -n \
-    --name "gcp-${var.gcp-project}" \
-    --url ${var.gitlab-url} \
-    --registration-token ${var.ci-token} \
+    --name "gcp-${var.gcp_project}" \
+    --url ${var.gitlab_url} \
+    --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
-    --machine-idle-time ${var.ci-worker-idle-time} \
+    --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "gitlab-ci-worker-%s" \
-    --machine-machine-options "google-project=${var.gcp-project}" \
-    --machine-machine-options "google-machine-type=${var.ci-worker-instance-type}" \
-    --machine-machine-options "google-zone=${var.gcp-zone}" \
-    --machine-machine-options "google-service-account=${google_service_account.ci-worker.email}" \
+    --machine-machine-options "google-project=${var.gcp_project}" \
+    --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
+    --machine-machine-options "google-zone=${var.gcp_zone}" \
+    --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
     --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform"
 
 echo "GitLab CI Runner installation complete"
 SCRIPT
 
   service_account {
-    email  = google_service_account.ci-runner.email
+    email  = google_service_account.ci_runner.email
     scopes = ["cloud-platform"]
   }
 }
