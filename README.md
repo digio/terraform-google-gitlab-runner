@@ -38,3 +38,4 @@ resource "google_project_iam_member" "worker-storage-admin" {
   role    = "roles/storage.admin"
   member = "serviceAccount:${module.ci.ci-worker-service-account.email}"
 }
+```
