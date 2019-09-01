@@ -24,8 +24,8 @@ provider "google" {
 
 # Install the GitLab CI Runner infrastructure
 module "ci" {
-  source      = "brettch/gitlab-runner/google"
-  version     = "0.0.8"
+  source      = "mantel-digio/gitlab-runner/google"
+  version     = "0.0.9"
 
   gcp_project = var.gcp_project
   gcp_zone    = var.gcp_zone
