@@ -82,8 +82,8 @@ echo "Installing GitLab CI Runner"
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
 sudo yum install -y gitlab-runner
 
-echo "Installing a version of docker machine with support for specifying GCP service accounts."
-gsutil cp gs://gcp-docker-machine/docker-machine /tmp/docker-machine
+echo "Installing docker machine."
+curl -L https://github.com/docker/machine/releases/download/v0.16.2/docker-machine-Linux-x86_64 -o /tmp/docker-machine
 sudo install /tmp/docker-machine /usr/local/bin/docker-machine
 
 echo "Verifying docker-machine and generating SSH keys ahead of time."
