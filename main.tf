@@ -76,6 +76,8 @@ resource "google_compute_instance" "ci_runner" {
   }
 
   metadata_startup_script = <<SCRIPT
+set -e
+
 echo "Installing GitLab CI Runner"
 curl -L https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh | sudo bash
 sudo yum install -y gitlab-runner
