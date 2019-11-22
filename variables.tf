@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+variable "name" {
+  type    = string
+  default = "gitlab-ci"
+}
 variable "gcp_project" {
   type        = string
   description = "The GCP project to deploy the runner into."
@@ -29,10 +33,6 @@ variable "gitlab_url" {
 variable "ci_token" {
   type        = string
   description = "The runner registration token obtained from GitLab."
-}
-variable "ci_runner_instance_name" {
-  type    = string
-  default = "gitlab-ci-runner"
 }
 variable "ci_runner_instance_type" {
   type        = string
