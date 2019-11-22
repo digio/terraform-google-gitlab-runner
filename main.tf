@@ -107,7 +107,7 @@ sudo gitlab-runner register -n \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
-    --docker-privileged ${var.docker_privileged} \
+    --docker-privileged=${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "gitlab-ci-worker-%s" \
