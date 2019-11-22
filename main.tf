@@ -117,6 +117,7 @@ sudo gitlab-runner register -n \
     --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
     --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform" \
     --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
+    --machine-machine-options "google-tags=${var.ci_worker_instance_tags}" \
     --machine-machine-options "engine-storage-driver=${var.ci_worker_storage_driver}"
 
 echo "GitLab CI Runner installation complete"

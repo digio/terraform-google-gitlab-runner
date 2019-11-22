@@ -57,6 +57,10 @@ variable "ci_worker_instance_type" {
   default     = "n1-standard-1"
   description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
 }
+variable "ci_worker_instance_tags" {
+  type    = string
+  default = "gitlab-ci-worker"
+}
 variable "ci_worker_disk_size" {
   type    = string
   default = "10"
