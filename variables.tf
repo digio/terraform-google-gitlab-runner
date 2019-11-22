@@ -30,6 +30,10 @@ variable "ci_token" {
   type        = string
   description = "The runner registration token obtained from GitLab."
 }
+variable "ci_runner_instance_name" {
+  type    = string
+  default = "gitlab-ci-runner"
+}
 variable "ci_runner_instance_type" {
   type        = string
   default     = "f1-micro"
@@ -52,4 +56,16 @@ variable "ci_worker_instance_type" {
   type        = string
   default     = "n1-standard-1"
   description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
+}
+variable "ci_worker_disk_size" {
+  type    = string
+  default = "10"
+}
+variable "ci_worker_storage_driver" {
+  type    = string
+  default = "overlay"
+}
+variable "docker_privileged" {
+  type    = string
+  default = "false"
 }

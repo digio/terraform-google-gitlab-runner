@@ -53,7 +53,7 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
 # Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
-  name         = "gitlab-ci-runner"
+  name         = var.ci_runner_instance_name
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
 
@@ -107,6 +107,7 @@ sudo gitlab-runner register -n \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
+    --docker-privileged ${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "gitlab-ci-worker-%s" \
@@ -114,7 +115,9 @@ sudo gitlab-runner register -n \
     --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
     --machine-machine-options "google-zone=${var.gcp_zone}" \
     --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
-    --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform"
+    --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform" \
+    --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
+    --machine-machine-options "engine-storage-driver=${var.ci_worker_storage_driver}"
 
 echo "GitLab CI Runner installation complete"
 SCRIPT
