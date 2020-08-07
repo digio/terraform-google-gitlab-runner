@@ -50,7 +50,6 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
   member             = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 
-# Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
   name         = var.ci_runner_instance_name
@@ -107,8 +106,8 @@ sudo gitlab-runner register -n \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
-    --tag-list "gcp,devop" \
-    --run-untagged="true" \
+    --tag-list "${var.ci_runner_tags}" \
+    --run-untagged="${var.ci_runner_untagged}" \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "${var.ci_runner_instance_name}-worker-%s" \
