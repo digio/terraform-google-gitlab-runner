@@ -93,7 +93,7 @@ docker-machine create --driver google \
     --google-zone ${var.gcp_zone} \
     --google-service-account ${google_service_account.ci_worker.email} \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
-    test-docker-machine
+    ${var.ci_runner_instance_name}-test-machine
 
 docker-machine rm -y test-docker-machine
 
@@ -111,7 +111,7 @@ sudo gitlab-runner register -n \
     --run-untagged="true" \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
-    --machine-machine-name "gitlab-ci-worker-%s" \
+    --machine-machine-name "${var.ci_runner_instance_name}-worker-%s" \
     --machine-machine-options "google-project=${var.gcp_project}" \
     --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
     --machine-machine-options "google-disk-type=pd-ssd" \
