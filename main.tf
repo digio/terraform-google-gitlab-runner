@@ -62,7 +62,7 @@ resource "google_compute_instance" "ci_runner" {
   boot_disk {
     initialize_params {
       image = "centos-cloud/centos-7"
-      size  = "10"
+      size  = "20"
       type  = "pd-standard"
     }
   }
