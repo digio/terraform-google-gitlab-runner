@@ -30,6 +30,10 @@ variable "ci_token" {
   type        = string
   description = "The runner registration token obtained from GitLab."
 }
+variable "ci_runner_instance_name" {
+  type        = string
+  description = "The name of the runner to be identified inside gitlab"
+}
 variable "ci_runner_instance_type" {
   type        = string
   default     = "e2-micro"
