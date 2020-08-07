@@ -102,11 +102,13 @@ sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runne
 
 echo "Registering GitLab CI runner with GitLab instance."
 sudo gitlab-runner register -n \
-    --name "gcp-${var.gcp_project}" \
+    --name "gcp-${var.ci_runner_instance_name}" \
     --url ${var.gitlab_url} \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
+    --tag-list "gcp,devop" \
+    --run-untagged="true" \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "gitlab-ci-worker-%s" \
