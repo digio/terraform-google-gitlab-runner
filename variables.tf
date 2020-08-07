@@ -32,7 +32,7 @@ variable "ci_token" {
 }
 variable "ci_runner_instance_type" {
   type        = string
-  default     = "f1-micro"
+  default     = "e2-micro"
   description = <<EOF
 The instance type used for the runner. This shouldn't need to be changed because the builds
 themselves run on separate worker instances.
