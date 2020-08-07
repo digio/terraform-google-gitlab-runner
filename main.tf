@@ -95,7 +95,7 @@ docker-machine create --driver google \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
     ${var.ci_runner_instance_name}-test-machine
 
-docker-machine rm -y test-docker-machine
+docker-machine rm -y ${var.ci_runner_instance_name}-test-machine
 
 echo "Setting GitLab concurrency"
 sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
