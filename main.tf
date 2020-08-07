@@ -53,7 +53,7 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
 # Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
-  name         = "gitlab-ci-runner"
+  name         = var.ci_runner_instance_name
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
 
