@@ -30,9 +30,13 @@ variable "ci_token" {
   type        = string
   description = "The runner registration token obtained from GitLab."
 }
+variable "ci_runner_instance_name" {
+  type        = string
+  description = "The name of the runner to be identified inside gitlab"
+}
 variable "ci_runner_instance_type" {
   type        = string
-  default     = "f1-micro"
+  default     = "e2-micro"
   description = <<EOF
 The instance type used for the runner. This shouldn't need to be changed because the builds
 themselves run on separate worker instances.
@@ -52,4 +56,15 @@ variable "ci_worker_instance_type" {
   type        = string
   default     = "n1-standard-1"
   description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
+}
+variable "ci_runner_tags" {
+    type        = string
+    default     = "gcp, devops"
+    description = "Gitlab Tags for the new runner"
+}
+# Create the Gitlab CI Runner instance.
+variable "ci_runner_untagged" {
+    type        = string
+    default     = "true"
+    description = "also run jobs without any tags"
 }

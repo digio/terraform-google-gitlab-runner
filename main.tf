@@ -50,10 +50,9 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
   member             = "serviceAccount:${google_service_account.ci_runner.email}"
 }
 
-# Create the Gitlab CI Runner instance.
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
-  name         = "gitlab-ci-runner"
+  name         = var.ci_runner_instance_name
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
 
@@ -62,7 +61,7 @@ resource "google_compute_instance" "ci_runner" {
   boot_disk {
     initialize_params {
       image = "centos-cloud/centos-7"
-      size  = "10"
+      size  = "20"
       type  = "pd-standard"
     }
   }
@@ -93,25 +92,29 @@ docker-machine create --driver google \
     --google-zone ${var.gcp_zone} \
     --google-service-account ${google_service_account.ci_worker.email} \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
-    test-docker-machine
+    ${var.ci_runner_instance_name}-test-machine
 
-docker-machine rm -y test-docker-machine
+docker-machine rm -y ${var.ci_runner_instance_name}-test-machine
 
 echo "Setting GitLab concurrency"
 sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
 
 echo "Registering GitLab CI runner with GitLab instance."
 sudo gitlab-runner register -n \
-    --name "gcp-${var.gcp_project}" \
+    --name "gcp-${var.ci_runner_instance_name}" \
     --url ${var.gitlab_url} \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
+    --tag-list "${var.ci_runner_tags}" \
+    --run-untagged="${var.ci_runner_untagged}" \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
-    --machine-machine-name "gitlab-ci-worker-%s" \
+    --machine-machine-name "${var.ci_runner_instance_name}-%s" \
     --machine-machine-options "google-project=${var.gcp_project}" \
     --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
+    --machine-machine-options "google-disk-type=pd-ssd" \
+    --machine-machine-options "google-disk-size=40" \
     --machine-machine-options "google-zone=${var.gcp_zone}" \
     --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
     --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform"
