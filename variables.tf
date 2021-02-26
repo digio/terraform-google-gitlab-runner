@@ -32,6 +32,7 @@ variable "ci_token" {
 }
 variable "ci_runner_instance_name" {
   type        = string
+  default     = "gitlab-ci-runner"
   description = "The name of the runner to be identified inside gitlab"
 }
 variable "ci_runner_instance_type" {
