@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-variable "name" {
-  type    = string
-  default = "gitlab-ci"
+# Global options
+variable "ci_token" {
+  type        = string
+  description = "The runner registration token obtained from GitLab."
 }
 variable "gcp_project" {
   type        = string
@@ -30,10 +31,12 @@ variable "gitlab_url" {
   type        = string
   description = "The URL of the GitLab server hosting the projects to be built."
 }
-variable "ci_token" {
-  type        = string
-  description = "The runner registration token obtained from GitLab."
+variable "name" {
+  type    = string
+  default = "gitlab-ci"
 }
+
+# Runner options
 variable "ci_runner_instance_name" {
   type        = string
   default     = "gitlab-ci-runner"
@@ -47,38 +50,40 @@ The instance type used for the runner. This shouldn't need to be changed because
 themselves run on separate worker instances.
 EOF
 }
+variable "ci_runner_tags" {
+    type        = string
+    default     = "gcp, devops"
+    description = "Gitlab Tags for the new runner"
+}
+variable "ci_runner_untagged" {
+    type        = string
+    default     = "true"
+    description = "also run jobs without any tags"
+}
+
+# Worker options
 variable "ci_concurrency" {
   type        = number
   default     = 1
   description = "The maximum number of worker instances to create."
+}
+variable "ci_worker_disk_size" {
+  type    = string
+  default = "10"
 }
 variable "ci_worker_idle_time" {
   type        = number
   default     = 300
   description = "The maximum idle time for workers before they are shutdown."
 }
-variable "ci_worker_instance_type" {
-  type        = string
-  default     = "n1-standard-1"
-  description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
-}
-variable "ci_runner_tags" {
-    type        = string
-    default     = "gcp, devops"
-    description = "Gitlab Tags for the new runner"
-}
-# Create the Gitlab CI Runner instance.
-variable "ci_runner_untagged" {
-    type        = string
-    default     = "true"
-    description = "also run jobs without any tags"
 variable "ci_worker_instance_tags" {
   type    = string
   default = "gitlab-ci-worker"
 }
-variable "ci_worker_disk_size" {
-  type    = string
-  default = "10"
+variable "ci_worker_instance_type" {
+  type        = string
+  default     = "n1-standard-1"
+  description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
 }
 variable "ci_worker_storage_driver" {
   type    = string
