@@ -46,7 +46,7 @@ variable "ci_runner_disk_size" {
 variable "ci_runner_gitlab_name" {
   type        = string
   default     = ""
-  description = "Register the runner in GitLab using this name.  If empty the value gcp-${var.gcp_project} will be used."
+  description = "Register the runner in GitLab using this name.  If empty the value \"gcp-$${var.gcp_project}\" will be used."
 }
 variable "ci_runner_gitlab_tags" {
     type        = string
