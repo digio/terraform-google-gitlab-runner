@@ -52,7 +52,7 @@ EOF
 }
 variable "ci_runner_tags" {
     type        = string
-    default     = "gcp, devops"
+    default     = ""
     description = "Gitlab Tags for the new runner"
 }
 variable "ci_runner_untagged" {
