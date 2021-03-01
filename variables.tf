@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
+variable "name" {
+  type    = string
+  default = "gitlab-ci"
+}
 variable "gcp_project" {
   type        = string
   description = "The GCP project to deploy the runner into."
@@ -68,4 +72,19 @@ variable "ci_runner_untagged" {
     type        = string
     default     = "true"
     description = "also run jobs without any tags"
+variable "ci_worker_instance_tags" {
+  type    = string
+  default = "gitlab-ci-worker"
+}
+variable "ci_worker_disk_size" {
+  type    = string
+  default = "10"
+}
+variable "ci_worker_storage_driver" {
+  type    = string
+  default = "overlay"
+}
+variable "docker_privileged" {
+  type    = string
+  default = "false"
 }

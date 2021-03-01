@@ -17,7 +17,7 @@
 # Service account for the Gitlab CI runner.  It doesn't run builds but it spawns other instances that do.
 resource "google_service_account" "ci_runner" {
   project      = var.gcp_project
-  account_id   = "gitlab-ci-runner"
+  account_id   = "${var.name}-runner"
   display_name = "GitLab CI Runner"
 }
 resource "google_project_iam_member" "instanceadmin_ci_runner" {
@@ -39,7 +39,7 @@ resource "google_project_iam_member" "securityadmin_ci_runner" {
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
 resource "google_service_account" "ci_worker" {
   project      = var.gcp_project
-  account_id   = "gitlab-ci-worker"
+  account_id   = "${var.name}-worker"
   display_name = "GitLab CI Worker"
 }
 
@@ -52,7 +52,11 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
 
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
+<<<<<<< HEAD
   name         = var.ci_runner_instance_name
+=======
+  name         = "${var.name}-runner"
+>>>>>>> infuseai/feature/expose-more-params
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
 
@@ -108,6 +112,7 @@ sudo gitlab-runner register -n \
     --docker-image "alpine:latest" \
     --tag-list "${var.ci_runner_tags}" \
     --run-untagged="${var.ci_runner_untagged}" \
+    --docker-privileged=${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
     --machine-machine-name "${var.ci_runner_instance_name}-%s" \
@@ -117,7 +122,10 @@ sudo gitlab-runner register -n \
     --machine-machine-options "google-disk-size=40" \
     --machine-machine-options "google-zone=${var.gcp_zone}" \
     --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
-    --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform"
+    --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform" \
+    --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
+    --machine-machine-options "google-tags=${var.ci_worker_instance_tags}" \
+    --machine-machine-options "engine-storage-driver=${var.ci_worker_storage_driver}"
 
 echo "GitLab CI Runner installation complete"
 SCRIPT
