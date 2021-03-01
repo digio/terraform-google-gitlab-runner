@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
+# Compute the runner name to use for registration in GitLab.  We provide a default based on the GCP project name but it
+# can be overridden if desired.
+locals {
+  ci_runner_gitlab_name_final = (var.ci_runner_gitlab_name != "" ? var.ci_runner_gitlab_name : "gcp-${var.gcp_project}" )
+}
+
 # Service account for the Gitlab CI runner.  It doesn't run builds but it spawns other instances that do.
 resource "google_service_account" "ci_runner" {
   project      = var.gcp_project
-  account_id   = "${var.name}-runner"
+  account_id   = "${var.gcp_resource_prefix}-runner"
   display_name = "GitLab CI Runner"
 }
 resource "google_project_iam_member" "instanceadmin_ci_runner" {
@@ -39,7 +45,7 @@ resource "google_project_iam_member" "securityadmin_ci_runner" {
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
 resource "google_service_account" "ci_worker" {
   project      = var.gcp_project
-  account_id   = "${var.name}-worker"
+  account_id   = "${var.gcp_resource_prefix}-worker"
   display_name = "GitLab CI Worker"
 }
 
@@ -52,11 +58,7 @@ resource "google_service_account_iam_member" "ci_worker_ci_runner" {
 
 resource "google_compute_instance" "ci_runner" {
   project      = var.gcp_project
-<<<<<<< HEAD
-  name         = var.ci_runner_instance_name
-=======
-  name         = "${var.name}-runner"
->>>>>>> infuseai/feature/expose-more-params
+  name         = "${var.gcp_resource_prefix}-runner"
   machine_type = var.ci_runner_instance_type
   zone         = var.gcp_zone
 
@@ -96,16 +98,16 @@ docker-machine create --driver google \
     --google-zone ${var.gcp_zone} \
     --google-service-account ${google_service_account.ci_worker.email} \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
-    ${var.ci_runner_instance_name}-test-machine
+    ${var.gcp_resource_prefix}-test-machine
 
-docker-machine rm -y ${var.ci_runner_instance_name}-test-machine
+docker-machine rm -y ${var.gcp_resource_prefix}-test-machine
 
 echo "Setting GitLab concurrency"
 sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
 
 echo "Registering GitLab CI runner with GitLab instance."
 sudo gitlab-runner register -n \
-    --name "gcp-${var.ci_runner_instance_name}" \
+    --name "${local.ci_runner_gitlab_name_final}" \
     --url ${var.gitlab_url} \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
@@ -115,17 +117,17 @@ sudo gitlab-runner register -n \
     --docker-privileged=${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \
-    --machine-machine-name "${var.ci_runner_instance_name}-%s" \
+    --machine-machine-name "${var.gcp_resource_prefix}-worker-%s" \
     --machine-machine-options "google-project=${var.gcp_project}" \
     --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
-    --machine-machine-options "google-disk-type=pd-ssd" \
-    --machine-machine-options "google-disk-size=40" \
     --machine-machine-options "google-zone=${var.gcp_zone}" \
     --machine-machine-options "google-service-account=${google_service_account.ci_worker.email}" \
     --machine-machine-options "google-scopes=https://www.googleapis.com/auth/cloud-platform" \
+    --machine-machine-options "google-disk-type=pd-ssd" \
     --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
     --machine-machine-options "google-tags=${var.ci_worker_instance_tags}" \
-    --machine-machine-options "engine-storage-driver=${var.ci_worker_storage_driver}"
+    --machine-machine-options "engine-storage-driver=${var.ci_worker_storage_driver}" \
+    && true
 
 echo "GitLab CI Runner installation complete"
 SCRIPT

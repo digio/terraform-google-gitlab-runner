@@ -31,16 +31,16 @@ variable "gitlab_url" {
   type        = string
   description = "The URL of the GitLab server hosting the projects to be built."
 }
-variable "name" {
+variable "gcp_resource_prefix" {
   type    = string
   default = "gitlab-ci"
 }
 
 # Runner options
-variable "ci_runner_instance_name" {
+variable "ci_runner_gitlab_name" {
   type        = string
-  default     = "gitlab-ci-runner"
-  description = "The name of the runner to be identified inside gitlab"
+  default     = ""
+  description = "The name of the runner to be identified inside gitlab.  If empty the value gcp-${var.gcp_project} will be used."
 }
 variable "ci_runner_instance_type" {
   type        = string
