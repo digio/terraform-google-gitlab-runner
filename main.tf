@@ -112,8 +112,8 @@ sudo gitlab-runner register -n \
     --registration-token ${var.ci_token} \
     --executor "docker+machine" \
     --docker-image "alpine:latest" \
-    --tag-list "${var.ci_runner_tags}" \
-    --run-untagged="${var.ci_runner_untagged}" \
+    --tag-list "${var.ci_runner_gitlab_tags}" \
+    --run-untagged="${var.ci_runner_gitlab_untagged}" \
     --docker-privileged=${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
     --machine-machine-driver google \

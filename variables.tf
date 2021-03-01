@@ -34,6 +34,7 @@ variable "gitlab_url" {
 variable "gcp_resource_prefix" {
   type    = string
   default = "gitlab-ci"
+  description = "The prefix to apply to all GCP resource names (e.g. <prefix>-runner, <prefix>-worker-1)."
 }
 
 # Runner options
@@ -45,7 +46,17 @@ variable "ci_runner_disk_size" {
 variable "ci_runner_gitlab_name" {
   type        = string
   default     = ""
-  description = "The name of the runner to be identified inside gitlab.  If empty the value gcp-${var.gcp_project} will be used."
+  description = "Register the runner in GitLab using this name.  If empty the value gcp-${var.gcp_project} will be used."
+}
+variable "ci_runner_gitlab_tags" {
+    type        = string
+    default     = ""
+    description = "Register the runner to execute GitLab jobs with these tags."
+}
+variable "ci_runner_gitlab_untagged" {
+    type        = string
+    default     = "true"
+    description = "Register the runner to also execute GitLab jobs that are untagged."
 }
 variable "ci_runner_instance_type" {
   type        = string
@@ -55,16 +66,6 @@ The instance type used for the runner. This shouldn't need to be changed because
 themselves run on separate worker instances.
 EOF
 }
-variable "ci_runner_tags" {
-    type        = string
-    default     = ""
-    description = "Gitlab Tags for the new runner"
-}
-variable "ci_runner_untagged" {
-    type        = string
-    default     = "true"
-    description = "also run jobs without any tags"
-}
 
 # Worker options
 variable "ci_concurrency" {
@@ -73,8 +74,9 @@ variable "ci_concurrency" {
   description = "The maximum number of worker instances to create."
 }
 variable "ci_worker_disk_size" {
-  type    = string
-  default = "10"
+  type        = string
+  default     = "10"
+  description = "The size of the persistent disk in GB."
 }
 variable "ci_worker_idle_time" {
   type        = number
@@ -82,15 +84,17 @@ variable "ci_worker_idle_time" {
   description = "The maximum idle time for workers before they are shutdown."
 }
 variable "ci_worker_instance_tags" {
-  type    = string
-  default = "gitlab-ci-worker"
+  type        = string
+  default     = "gitlab-ci-worker"
+  description = "The GCP instance networking tags to apply."
 }
 variable "ci_worker_instance_type" {
   type        = string
   default     = "n1-standard-1"
-  description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
+  description = "The GCP instance type.  This can be adjusted to meet the demands of builds jobs."
 }
 variable "docker_privileged" {
-  type    = string
-  default = "false"
+  type        = string
+  default     = "false"
+  description = "Give extended privileges to container."
 }
