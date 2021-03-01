@@ -37,6 +37,11 @@ variable "gcp_resource_prefix" {
 }
 
 # Runner options
+variable "ci_runner_disk_size" {
+  type        = string
+  default     = "20"
+  description = "The size of the persistent disk in GB."
+}
 variable "ci_runner_gitlab_name" {
   type        = string
   default     = ""
