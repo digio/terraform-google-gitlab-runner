@@ -44,7 +44,7 @@ variable "ci_runner_gitlab_name" {
 }
 variable "ci_runner_instance_type" {
   type        = string
-  default     = "e2-micro"
+  default     = "f1-micro"
   description = <<EOF
 The instance type used for the runner. This shouldn't need to be changed because the builds
 themselves run on separate worker instances.
