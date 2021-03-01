@@ -85,10 +85,6 @@ variable "ci_worker_instance_type" {
   default     = "n1-standard-1"
   description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
 }
-variable "ci_worker_storage_driver" {
-  type    = string
-  default = "overlay"
-}
 variable "docker_privileged" {
   type    = string
   default = "false"
