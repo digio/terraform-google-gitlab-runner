@@ -98,6 +98,9 @@ docker-machine create --driver google \
     --google-zone ${var.gcp_zone} \
     --google-service-account ${google_service_account.ci_worker.email} \
     --google-scopes https://www.googleapis.com/auth/cloud-platform \
+    --google-disk-type pd-ssd \
+    --google-disk-size ${var.ci_worker_disk_size} \
+    --google-tags ${var.ci_worker_instance_tags} \
     ${var.gcp_resource_prefix}-test-machine
 
 docker-machine rm -y ${var.gcp_resource_prefix}-test-machine
