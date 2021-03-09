@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+# Global options
+variable "ci_token" {
+  type        = string
+  description = "The runner registration token obtained from GitLab."
+}
 variable "gcp_project" {
   type        = string
   description = "The GCP project to deploy the runner into."
@@ -26,46 +31,70 @@ variable "gitlab_url" {
   type        = string
   description = "The URL of the GitLab server hosting the projects to be built."
 }
-variable "ci_token" {
-  type        = string
-  description = "The runner registration token obtained from GitLab."
+variable "gcp_resource_prefix" {
+  type    = string
+  default = "gitlab-ci"
+  description = "The prefix to apply to all GCP resource names (e.g. <prefix>-runner, <prefix>-worker-1)."
 }
-variable "ci_runner_instance_name" {
+
+# Runner options
+variable "ci_runner_disk_size" {
   type        = string
-  default     = "gitlab-ci-runner"
-  description = "The name of the runner to be identified inside gitlab"
+  default     = "20"
+  description = "The size of the persistent disk in GB."
+}
+variable "ci_runner_gitlab_name" {
+  type        = string
+  default     = ""
+  description = "Register the runner in GitLab using this name.  If empty the value \"gcp-$${var.gcp_project}\" will be used."
+}
+variable "ci_runner_gitlab_tags" {
+    type        = string
+    default     = ""
+    description = "Register the runner to execute GitLab jobs with these tags."
+}
+variable "ci_runner_gitlab_untagged" {
+    type        = string
+    default     = "true"
+    description = "Register the runner to also execute GitLab jobs that are untagged."
 }
 variable "ci_runner_instance_type" {
   type        = string
-  default     = "e2-micro"
+  default     = "f1-micro"
   description = <<EOF
 The instance type used for the runner. This shouldn't need to be changed because the builds
 themselves run on separate worker instances.
 EOF
 }
+
+# Worker options
 variable "ci_concurrency" {
   type        = number
   default     = 1
   description = "The maximum number of worker instances to create."
+}
+variable "ci_worker_disk_size" {
+  type        = string
+  default     = "10"
+  description = "The size of the persistent disk in GB."
 }
 variable "ci_worker_idle_time" {
   type        = number
   default     = 300
   description = "The maximum idle time for workers before they are shutdown."
 }
+variable "ci_worker_instance_tags" {
+  type        = string
+  default     = "gitlab-ci-worker"
+  description = "The GCP instance networking tags to apply."
+}
 variable "ci_worker_instance_type" {
   type        = string
   default     = "n1-standard-1"
-  description = "The worker instance size.  This can be adjusted to meet the demands of builds jobs."
+  description = "The GCP instance type.  This can be adjusted to meet the demands of builds jobs."
 }
-variable "ci_runner_tags" {
-    type        = string
-    default     = "gcp, devops"
-    description = "Gitlab Tags for the new runner"
-}
-# Create the Gitlab CI Runner instance.
-variable "ci_runner_untagged" {
-    type        = string
-    default     = "true"
-    description = "also run jobs without any tags"
+variable "docker_privileged" {
+  type        = string
+  default     = "false"
+  description = "Give extended privileges to container."
 }

@@ -10,4 +10,4 @@ The worker instances run under a `gitlab-ci-worker` service account.  This accou
 
 # Usage
 
-See [Examples](./examples) for more detail on how to configure this module.
+See examples for more detail on how to configure this module.
