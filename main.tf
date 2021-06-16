@@ -101,6 +101,7 @@ docker-machine create --driver google \
     --google-disk-type pd-ssd \
     --google-disk-size ${var.ci_worker_disk_size} \
     --google-tags ${var.ci_worker_instance_tags} \
+    --google-use-internal-ip \
     ${var.gcp_resource_prefix}-test-machine
 
 docker-machine rm -y ${var.gcp_resource_prefix}-test-machine
