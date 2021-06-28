@@ -41,6 +41,11 @@ resource "google_project_iam_member" "securityadmin_ci_runner" {
   role    = "roles/compute.securityAdmin"
   member  = "serviceAccount:${google_service_account.ci_runner.email}"
 }
+resource "google_project_iam_member" "logwriter_ci_runner" {
+  project = var.gcp_project
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.ci_runner.email}"
+}
 
 # Service account for Gitlab CI build instances that are dynamically spawned by the runner.
 resource "google_service_account" "ci_worker" {
