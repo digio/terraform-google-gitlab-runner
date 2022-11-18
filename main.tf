@@ -138,6 +138,10 @@ sudo gitlab-runner register -n \
     --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
     --machine-machine-options "google-tags=${var.ci_worker_instance_tags}" \
     --machine-machine-options "google-use-internal-ip" \
+    %{if var.pre_clone_script != ""}--pre-clone-script ${replace(format("%q", var.pre_clone_script), "$", "\\$")}%{endif} \
+    %{if var.post_clone_script != ""}--post-clone-script ${replace(format("%q", var.post_clone_script), "$", "\\$")}%{endif} \
+    %{if var.pre_build_script != ""}--pre-build-script ${replace(format("%q", var.pre_build_script), "$", "\\$")}%{endif} \
+    %{if var.post_build_script != ""}--post-build-script ${replace(format("%q", var.post_build_script), "$", "\\$")}%{endif} \
     && true
 
 echo "GitLab CI Runner installation complete"

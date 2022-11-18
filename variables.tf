@@ -98,3 +98,40 @@ variable "docker_privileged" {
   default     = "false"
   description = "Give extended privileges to container."
 }
+
+# Pre/post hook scripts
+variable "pre_clone_script" {
+  type        = string
+  default     = ""
+  description = <<EOF
+Commands to be executed on the runner before cloning the Git repository.
+NOTE: this script runs within the gitlab-runner helper image.
+EOF
+}
+
+variable "post_clone_script" {
+  type        = string
+  default     = ""
+  description = <<EOF
+Commands to be executed on the runner after cloning the Git repository.
+NOTE: this script runs within the gitlab-runner helper image.
+EOF
+}
+
+variable "pre_build_script" {
+  type        = string
+  default     = ""
+  description = <<EOF
+Commands to be executed on the runner before executing the build.
+NOTE: this script runs within the build image specified by .gitlab-ci.yml.
+EOF
+}
+
+variable "post_build_script" {
+  type        = string
+  default     = ""
+  description = <<EOF
+Commands to be executed on the runner after executing the build.
+NOTE: this script runs within the build image specified by .gitlab-ci.yml.
+EOF
+}
