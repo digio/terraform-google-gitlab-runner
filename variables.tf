@@ -38,6 +38,11 @@ variable "gcp_resource_prefix" {
 }
 
 # Runner options
+variable "ci_runner_network" {
+  type = string
+  default = "default"
+  description = "the network to add the runner on"
+}
 variable "ci_runner_disk_size" {
   type        = string
   default     = "20"
