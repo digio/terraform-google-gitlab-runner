@@ -43,6 +43,13 @@ variable "ci_runner_network" {
   default = "default"
   description = "the network to add the runner on"
 }
+
+variable "ci_runner_subnetwork" {
+  type        = string
+  default     = ""
+  description = "the subnetwork to add the runner on"
+}
+
 variable "ci_runner_disk_size" {
   type        = string
   default     = "20"
