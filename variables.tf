@@ -65,11 +65,7 @@ variable "ci_runner_gitlab_tags" {
     default     = ""
     description = "Register the runner to execute GitLab jobs with these tags."
 }
-variable "ci_runner_gitlab_untagged" {
-    type        = string
-    default     = "true"
-    description = "Register the runner to also execute GitLab jobs that are untagged."
-}
+
 variable "ci_runner_instance_type" {
   type        = string
   default     = "f1-micro"

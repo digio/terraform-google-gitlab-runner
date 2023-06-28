@@ -110,25 +110,27 @@ docker-machine create --driver google \
     --google-machine-image ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220419 \
     --google-tags ${var.ci_worker_instance_tags} \
     --google-use-internal-ip \
+    --google-network ${var.ci_runner_network} \
+     %{if var.ci_runner_subnetwork != ""}--google-subnetwork ${var.ci_runner_subnetwork}%{endif} \
     ${var.gcp_resource_prefix}-test-machine
 
-docker-machine rm -y ${var.gcp_resource_prefix}-test-machine
+# This is sometimes hanging, machine is correctly deleted but the check seems to be failing
+# So putting that in background instead to not block the rest of the process
+docker-machine rm -y ${var.gcp_resource_prefix}-test-machine &
 
 echo "Setting GitLab concurrency"
 sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
 
 echo "Registering GitLab CI runner with GitLab instance."
-sudo gitlab-runner register -n \
-    --name "${local.ci_runner_gitlab_name_final}" \
+sudo gitlab-runner register -n  \
     --url ${var.gitlab_url} \
-    --registration-token ${var.ci_token} \
+    --token ${var.ci_token} \
     --executor "docker+machine" \
-    --docker-image "alpine:latest" \
+    --docker-image "alpine:latest"  \
     --tag-list "${var.ci_runner_gitlab_tags}" \
-    --run-untagged="${var.ci_runner_gitlab_untagged}" \
+    --machine-machine-driver google \
     --docker-privileged=${var.docker_privileged} \
     --machine-idle-time ${var.ci_worker_idle_time} \
-    --machine-machine-driver google \
     --machine-machine-name "${var.gcp_resource_prefix}-worker-%s" \
     --machine-machine-options "google-project=${var.gcp_project}" \
     --machine-machine-options "google-machine-type=${var.ci_worker_instance_type}" \
@@ -140,11 +142,15 @@ sudo gitlab-runner register -n \
     --machine-machine-options "google-disk-size=${var.ci_worker_disk_size}" \
     --machine-machine-options "google-tags=${var.ci_worker_instance_tags}" \
     --machine-machine-options "google-use-internal-ip" \
+    --machine-machine-options "google-network=${var.ci_runner_network}" \
+    %{if var.ci_runner_subnetwork != ""}--machine-machine-options "google-subnetwork=${var.ci_runner_subnetwork}"%{endif} \
     %{if var.pre_clone_script != ""}--pre-clone-script ${replace(format("%q", var.pre_clone_script), "$", "\\$")}%{endif} \
     %{if var.post_clone_script != ""}--post-clone-script ${replace(format("%q", var.post_clone_script), "$", "\\$")}%{endif} \
     %{if var.pre_build_script != ""}--pre-build-script ${replace(format("%q", var.pre_build_script), "$", "\\$")}%{endif} \
     %{if var.post_build_script != ""}--post-build-script ${replace(format("%q", var.post_build_script), "$", "\\$")}%{endif} \
-    && true
+    || true
+
+sudo gitlab-runner verify
 
 echo "GitLab CI Runner installation complete"
 SCRIPT
