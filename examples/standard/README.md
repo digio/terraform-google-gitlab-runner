@@ -4,10 +4,18 @@ This directory is a standalone Terraform project for installing a GitLab runner 
 
 ## Usage
 
-Create a new GCP project and configure CLI access.
+Create a new GCP project.
+
+Configure CLI access. Create a new configuration and give it a unique name.
 
 ```
 `gcloud init`
+```
+
+Explicit enable the config for the current project via environment variable. This isn't strictly necessary but I recommend setting it via a tool like [direnv](https://direnv.net/) for the current folder so that you don't accidentally point to the wrong project.
+
+```
+export CLOUDSDK_ACTIVE_CONFIG_NAME=<my-config-name>
 ```
 
 Enable the compute API.
