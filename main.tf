@@ -114,9 +114,7 @@ docker-machine create --driver google \
      %{if var.ci_runner_subnetwork != ""}--google-subnetwork ${var.ci_runner_subnetwork}%{endif} \
     ${var.gcp_resource_prefix}-test-machine
 
-# This is sometimes hanging, machine is correctly deleted but the check seems to be failing
-# So putting that in background instead to not block the rest of the process
-docker-machine rm -y ${var.gcp_resource_prefix}-test-machine &
+docker-machine rm -y ${var.gcp_resource_prefix}-test-machine
 
 echo "Setting GitLab concurrency"
 sed -i "s/concurrent = .*/concurrent = ${var.ci_concurrency}/" /etc/gitlab-runner/config.toml
@@ -148,7 +146,7 @@ sudo gitlab-runner register -n  \
     %{if var.post_clone_script != ""}--post-clone-script ${replace(format("%q", var.post_clone_script), "$", "\\$")}%{endif} \
     %{if var.pre_build_script != ""}--pre-build-script ${replace(format("%q", var.pre_build_script), "$", "\\$")}%{endif} \
     %{if var.post_build_script != ""}--post-build-script ${replace(format("%q", var.post_build_script), "$", "\\$")}%{endif} \
-    || true
+    && true
 
 sudo gitlab-runner verify
 
